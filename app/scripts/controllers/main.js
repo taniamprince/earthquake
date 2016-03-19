@@ -10,26 +10,23 @@ var earthquakeApp = angular.module('earthquakeApp',[])
  * Returns the largest earthquake for the day, week, month, and year
  */
 earthquakeApp.controller('LargestQuakes', ['$scope','$http', function($scope, $http) {
+
 	// Calculate start and end dates
-  	var date = new Date()
   	if ($scope.param == "today") {
-	    var start = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 1)
-		var end = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
+	    var start = moment().add(-1, 'days')
 	} else if ($scope.param == "week") {
-		var start = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + (date.getDate() - 7)
-		var end = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()	    
+		var start = moment().add(-7, 'days')    
 	} else if ($scope.param == "month") {
-		var start = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
-		var end = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()	    
+		var start = moment().add(-1, 'months')	    
 	} else {
-	    var start = (date.getFullYear() - 1) + "-" + date.getMonth() + "-" + date.getDate()
-		var end = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
+	    var start = moment().add(-1, 'years')
 	}
+	var end = moment();
 
   	// Construct query url
-  	var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" + start + "&endtime=" + end
+  	var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
 
-  	// Get and return JSON response
+  	// Get earthquake data
   	$http.get(url)
 	.success(function(data, status, headers, config) {
 		var result = data.features.map(function (feature) {
@@ -46,33 +43,35 @@ earthquakeApp.controller('LargestQuakes', ['$scope','$http', function($scope, $h
 
 earthquakeApp.controller('MapDay', ['$scope','$http', function($scope, $http) {
 
+	$scope.quakes = []
+
 	function onEachFeature(feature, layer) {
 		// Add popup with earthquake information to marker
 	    var quake = layer.bindPopup(feature.properties.title);
+
+	    var html = [feature.properties.mag.toString(), moment(feature.properties.time).fromNow().toString()]
+		html.join("%");
+	    $scope.quakes.push(html)
 	}
 
 	// Initialize map
 	var map = L.map('mapid').setView([0, 0], 1);
 
-	// Get JSON response
+	// Get earthquake data
   	$http.get('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson')
 	.success(function(data, status, headers, config) {
 		L.geoJson(data, {
+			// Add earthquake informtion to marker popups
 		    onEachFeature: onEachFeature
 		,
+			// Add earthquake magnitude to marker
             pointToLayer: function(feature, latlng) {
                 return L.marker(latlng, {
-                    icon: L.AwesomeMarkers.icon({icon: '', prefix: 'fa', markerColor: 'red', html: feature.properties.mag})
+                    icon: L.AwesomeMarkers.icon({icon: '', prefix: 'fa', markerColor: 'darkblue', html: feature.properties.mag})
                 })
             }}).addTo(map);
-		//L.geoJson(data.features).addTo(map);
-		var result = data.features.map(function (feature) {
-  			return feature.properties.title
-		});
-	    $scope.results = result.toString()
 	})
 	.error(function(error, status, headers, config) {
-		 $scope.results = "No data"
 	     console.log(status)
 	     console.log("Error occured")
 	});
@@ -80,16 +79,5 @@ earthquakeApp.controller('MapDay', ['$scope','$http', function($scope, $http) {
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
       maxZoom: 18, id: 'mapbox.streets'
     }).addTo(map);
-
-    var popup = L.popup();
-
-    function onMapClick(e) {
-      popup
-        .setLatLng(e.latlng)
-        .setContent("You clicked the map at " + e.latlng.toString())
-        .openOn(map);
-    }
-
-    map.on('click', onMapClick);
 
 }]);
