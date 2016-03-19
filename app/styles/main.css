@@ -199,11 +199,10 @@ a:focus {
   min-height: 325px;
   padding-top: 100px;
   padding-bottom: 0px;
-  text-align: center;
 }
 
 #headerwrap h3, h5 {
-  color: white;
+  color: white !important;
   font-weight: 400;
 }
 
@@ -385,28 +384,8 @@ csmall2 {
   margin-bottom: 40px;
 }
 
-.badge-theme {
-  background: #00b3fe;
-}
+/*  ################################################################
+  MAPS
+################################################################# */
 
-/* Contact Page */
-#contactwrap {
-  background: url(../img/contact.jpg) no-repeat center top;
-  margin-top: -60px;
-  padding-top:0px;
-  text-align:center;
-  background-attachment: relative;
-  background-position: center center;
-  min-height: 400px;
-  width: 100%;
-  
-    -webkit-background-size: 100%;
-    -moz-background-size: 100%;
-    -o-background-size: 100%;
-    background-size: 100%;
-
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-}
+#mapid { height: 425px; }

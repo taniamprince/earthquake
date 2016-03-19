@@ -11,7 +11,10 @@
     <!-- endbower -->
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css">
+    <link rel="stylesheet" href="bower_components/leaflet/leaflet.awesome-markers.css">
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="bower_components/leaflet/leaflet.css" />
     <!-- endbuild -->
   </head>
   <body ng-app="earthquakeApp">
@@ -50,22 +53,22 @@
           <div class="col-lg-4">  
             <h3>Biggest earthquakes</h3>
             <div ng-init="param='today';">
-              <div ng-app="today" ng-controller="largest">
+              <div ng-app="today" ng-controller="LargestQuakes">
                 <h5>Today: {{ results }}</h5>
               </div> 
             </div>
             <div ng-init="param='week';">
-              <div ng-app="week" ng-controller="largest">
+              <div ng-app="week" ng-controller="LargestQuakes">
                 <h5>Week: {{ results }}</h5>
               </div> 
             </div>
             <div ng-init="param='month';">
-              <div ng-app="week" ng-controller="largest">
+              <div ng-app="week" ng-controller="LargestQuakes">
                 <h5>Month: {{ results }}</h5>
               </div> 
             </div>
             <div ng-init="param='year';">
-              <div ng-app="week" ng-controller="largest">
+              <div ng-app="week" ng-controller="LargestQuakes">
                 <h5>Year: {{ results }}</h5>
               </div> 
             </div>
@@ -87,8 +90,23 @@
       </div> <!-- /container -->
     </div><!-- /headerwrap -->
 
+    <!-- Earthquake map -->
     <div class="container">
-    <div ng-view=""></div>
+      <div class="row">
+        <div class="col-lg-12">
+          <h2>Latest earthquakes</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8">
+          <div id="mapid"></div>
+          <script src="bower_components/leaflet/leaflet.js"></script>
+          <script src="bower_components/leaflet/leaflet.awesome-markers.js"></script>          
+        </div>
+        <div class="col-lg-4"> 
+        <div ng-app="MapDay" ng-controller="MapDay"></div>
+        </div>
+      </div>
     </div>
 
     <div class="footer">
@@ -115,6 +133,8 @@
     <script src="scripts/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/about.js"></script>
+    <script src="scripts/controllers/map.js"></script>
     <!-- endbuild -->
+
 </body>
 </html>
