@@ -106,7 +106,17 @@
         </div>
         <div class="col-lg-4"> 
           <div ng-app="MapDay" ng-controller="MapDay">
-            {{ quakes[0] }}
+            <table class="table table-striped">
+              <tbody>
+                <tr ng-repeat="quake in quakes track by $index">
+                  <td>
+                    <span class="time">{{ quake[0] }}</span>
+                    <span class="mag">{{ quake[1] }} magnitude</span>
+                    <span class="location">{{ quake[2] }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

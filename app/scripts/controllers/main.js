@@ -49,9 +49,9 @@ earthquakeApp.controller('MapDay', ['$scope','$http', function($scope, $http) {
 		// Add popup with earthquake information to marker
 	    var quake = layer.bindPopup(feature.properties.title);
 
-	    var html = [feature.properties.mag.toString(), moment(feature.properties.time).fromNow().toString()]
-		html.join("%");
-	    $scope.quakes.push(html)
+	    // Add quake to list of quakes
+	    var list = [moment(feature.properties.time).fromNow(), feature.properties.mag, feature.properties.place]
+	    $scope.quakes.push(list)
 	}
 
 	// Initialize map

@@ -389,3 +389,16 @@ csmall2 {
 ################################################################# */
 
 #mapid { height: 425px; }
+.time {
+  color: #b3b3b3;
+  font-weight: bold;
+}
+.mag {
+  color: #0067A3;
+  font-weight: bold;
+}
+.location {
+  color: #333333;
+  font-weight: bold;
+  display: block;
+}
