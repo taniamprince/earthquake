@@ -1,10 +1,11 @@
-<!-- Biggest earthquakes -->
-<div ng-controller="LargestQuakes">
-  <div id="headerwrap">
-    <div class="container">
-      <div class="row">
-          <div class="col-lg-4">  
-            <h3>Biggest earthquakes</h3>
+<div id="headerwrap">
+  <div class="container">
+    <div class="row">
+        <div class="col-lg-4">
+
+          <!-- Biggest Earthquakes -->  
+          <h3>Biggest earthquakes</h3>
+          <div ng-controller="LargestQuakes">
             <div ng-init="param='today';">
               <div ng-app="today" ng-controller="LargestQuakes">
                 <h5>Today: {{ results }}</h5>
@@ -26,31 +27,31 @@
               </div> 
             </div>
           </div>
+        </div>
 
-          <!-- Earthquake frequency -->
-          <div class="col-lg-4">  
-            <h3>Earthquake frequency</h3> 
-            <p>Stats go here</p>   
-          </div>
+        <!-- Earthquake frequency -->
+        <div class="col-lg-4">  
+          <h3>Earthquake frequency</h3> 
+          <p>Stats go here</p>   
+        </div>
 
-          <!-- Tsunami warnings -->
-          <div class="col-lg-4">  
-            <h3>Tsunami Warnings</h3>  
-            <p>Stats go here</p>  
-          </div>
+        <!-- Tsunami warnings -->
+        <div class="col-lg-4">  
+          <h3>Tsunami Warnings</h3>  
+          <p>Stats go here</p>  
+        </div>
 
-      </div><!-- /row -->
-    </div> <!-- /container -->
-  </div>
+    </div><!-- /row -->
+  </div> <!-- /container -->
 </div>
 
-<!-- Earthquake map -->
+<!-- Earthquake Map -->
 <div ng-controller="MapDay">
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
         <h2>Today's Largest Earthquakes</h2>
-        <h4>Earthquake's over 4.5 magnitude</h4>
+        <h4>Earthquake's over 4.5 magnitude in the last 24 hours</h4>
       </div>
     </div>
     <div class="row">

@@ -32,6 +32,10 @@ angular.module('earthquakeApp')
   	// Construct query url
   	var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
 
+  	if ($scope.param == "year") {
+  		var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD") + '&&minmagnitude=7.5'
+  	}
+
   	// Get earthquake data
   	$http.get(url)
 	.success(function(data, status, headers, config) {
