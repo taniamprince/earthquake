@@ -1,6 +1,6 @@
 'use strict';
 
-var earthquakeApp = angular.module('earthquakeApp',[])
+//var earthquakeApp = angular.module('earthquakeApp',[])
 
 /**
  * @ngdoc function
@@ -9,7 +9,13 @@ var earthquakeApp = angular.module('earthquakeApp',[])
  * # LargestQuakes
  * Returns the largest earthquake for the day, week, month, and year
  */
-earthquakeApp.controller('LargestQuakes', ['$scope','$http', function($scope, $http) {
+
+angular.module('earthquakeApp')
+  .controller('MainCtrl', function () {
+  });
+
+angular.module('earthquakeApp')
+	.controller('LargestQuakes', ['$scope','$http', function($scope, $http) {
 
 	// Calculate start and end dates
   	if ($scope.param == "today") {
@@ -41,7 +47,8 @@ earthquakeApp.controller('LargestQuakes', ['$scope','$http', function($scope, $h
 	});
 }]);
 
-earthquakeApp.controller('MapDay', ['$scope','$http', function($scope, $http) {
+angular.module('earthquakeApp')
+.controller('MapDay', ['$scope','$http', function($scope, $http) {
 
 	$scope.quakes = []
 

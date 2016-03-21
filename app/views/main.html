@@ -1,0 +1,78 @@
+<!-- Biggest earthquakes -->
+<div ng-controller="LargestQuakes">
+  <div id="headerwrap">
+    <div class="container">
+      <div class="row">
+          <div class="col-lg-4">  
+            <h3>Biggest earthquakes</h3>
+            <div ng-init="param='today';">
+              <div ng-app="today" ng-controller="LargestQuakes">
+                <h5>Today: {{ results }}</h5>
+              </div> 
+            </div>
+            <div ng-init="param='week';">
+              <div ng-app="week" ng-controller="LargestQuakes">
+                <h5>Week: {{ results }}</h5>
+              </div> 
+            </div>
+            <div ng-init="param='month';">
+              <div ng-app="week" ng-controller="LargestQuakes">
+                <h5>Month: {{ results }}</h5>
+              </div> 
+            </div>
+            <div ng-init="param='year';">
+              <div ng-app="week" ng-controller="LargestQuakes">
+                <h5>Year: {{ results }}</h5>
+              </div> 
+            </div>
+          </div>
+
+          <!-- Earthquake frequency -->
+          <div class="col-lg-4">  
+            <h3>Earthquake frequency</h3> 
+            <p>Stats go here</p>   
+          </div>
+
+          <!-- Tsunami warnings -->
+          <div class="col-lg-4">  
+            <h3>Tsunami Warnings</h3>  
+            <p>Stats go here</p>  
+          </div>
+
+      </div><!-- /row -->
+    </div> <!-- /container -->
+  </div>
+</div>
+
+<!-- Earthquake map -->
+<div ng-controller="MapDay">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h2>Today's Largest Earthquakes</h2>
+        <h4>Earthquake's over 4.5 magnitude</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-8">
+        <div id="mapid"></div>
+        <script src="bower_components/leaflet/leaflet.js"></script>
+        <script src="bower_components/leaflet/leaflet.awesome-markers.js"></script>
+        <script src="bower_components/moment/moment.js"></script>           
+      </div>
+      <div class="col-lg-4"> 
+        <table class="table table-striped">
+          <tbody>
+            <tr ng-repeat="quake in quakes track by $index">
+              <td>
+                <span class="time">{{ quake[0] }}</span>
+                <span class="mag">{{ quake[1] }} magnitude</span>
+                <span class="location">{{ quake[2] }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
