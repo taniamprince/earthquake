@@ -1,49 +1,59 @@
-<div id="headerwrap">
-  <div class="container">
-    <div class="row">
-        <div class="col-lg-4">
 
-          <!-- Biggest Earthquakes -->  
-          <h3>Biggest earthquakes</h3>
-          <div ng-controller="LargestQuakes">
-            <div ng-init="param='today';">
-              <div ng-app="today" ng-controller="LargestQuakes">
-                <h5>Today: {{ results }}</h5>
+    <div class="container">
+        <div class="row flex-row">
+            <!-- Biggest Earthquakes --> 
+            <div class="col-lg-4">
+              <div class="panel panel-default">
+                <div class="panel-heading">Biggest Earthquakes</div>
+                <div class="panel-body">
+                  <div ng-controller="LargestQuakes">
+                    <div ng-init="param='today';">
+                      <div ng-app="today" ng-controller="LargestQuakes">
+                        <h5>Today: {{ results }}</h5>
+                      </div> 
+                    </div>
+                    <div ng-init="param='week';">
+                      <div ng-app="week" ng-controller="LargestQuakes">
+                        <h5>Week: {{ results }}</h5>
+                      </div> 
+                    </div>
+                    <div ng-init="param='month';">
+                      <div ng-app="week" ng-controller="LargestQuakes">
+                        <h5>Month: {{ results }}</h5>
+                      </div> 
+                    </div>
+                    <div ng-init="param='year';">
+                      <div ng-app="week" ng-controller="LargestQuakes">
+                        <h5>Year: {{ results }}</h5>
+                      </div> 
+                    </div>
+                  </div>
+                </div>
+              </div>              
+            </div>
+
+            <!-- Earthquake frequency -->
+            <div class="col-lg-4">  
+              <div class="panel panel-default">
+                <div class="panel-heading">Earthquake Frequency</div>
+                <div class="panel-body">
+                  Panel content
+                </div>
+              </div>  
+            </div>
+
+            <!-- Tsunami warnings -->
+            <div class="col-lg-4">  
+              <div class="panel panel-default">
+                <div class="panel-heading">Tsunami Warnings</div>
+                <div class="panel-body">
+                  Panel content
+                </div>
               </div> 
             </div>
-            <div ng-init="param='week';">
-              <div ng-app="week" ng-controller="LargestQuakes">
-                <h5>Week: {{ results }}</h5>
-              </div> 
-            </div>
-            <div ng-init="param='month';">
-              <div ng-app="week" ng-controller="LargestQuakes">
-                <h5>Month: {{ results }}</h5>
-              </div> 
-            </div>
-            <div ng-init="param='year';">
-              <div ng-app="week" ng-controller="LargestQuakes">
-                <h5>Year: {{ results }}</h5>
-              </div> 
-            </div>
-          </div>
         </div>
+    </div>
 
-        <!-- Earthquake frequency -->
-        <div class="col-lg-4">  
-          <h3>Earthquake frequency</h3> 
-          <p>Stats go here</p>   
-        </div>
-
-        <!-- Tsunami warnings -->
-        <div class="col-lg-4">  
-          <h3>Tsunami Warnings</h3>  
-          <p>Stats go here</p>  
-        </div>
-
-    </div><!-- /row -->
-  </div> <!-- /container -->
-</div>
 
 <!-- Earthquake Map -->
 <div ng-controller="MapDay">

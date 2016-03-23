@@ -78,7 +78,7 @@ angular.module('earthquakeApp')
 			// Add earthquake magnitude to marker
             pointToLayer: function(feature, latlng) {
                 return L.marker(latlng, {
-                    icon: L.AwesomeMarkers.icon({icon: '', prefix: 'fa', markerColor: 'darkblue', html: feature.properties.mag})
+                    icon: L.AwesomeMarkers.icon({icon: '', prefix: 'fa', markerColor: 'red', html: feature.properties.mag})
                 })
             }}).addTo(map);
 	})

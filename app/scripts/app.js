@@ -29,10 +29,10 @@ angular
         controller: 'AboutCtrl',
         controllerAs: 'about'
       })
-      .when('/map', {
-        templateUrl: 'views/map.html',
-        controller: 'MapCtrl',
-        controllerAs: 'map'
+      .when('/largest', {
+        templateUrl: 'views/largest.html',
+        controller: 'LargestCtrl',
+        controllerAs: 'largest'
       })
       .otherwise({
         redirectTo: '/'
