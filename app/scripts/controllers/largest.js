@@ -10,5 +10,4 @@
 angular.module('earthquakeApp')
   .controller('LargestCtrl', function () {
 
-    ];
   });

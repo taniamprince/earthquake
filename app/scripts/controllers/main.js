@@ -1,7 +1,5 @@
 'use strict';
 
-//var earthquakeApp = angular.module('earthquakeApp',[])
-
 /**
  * @ngdoc function
  * @name earthquakeApp.controller:LargestQuakes
@@ -9,7 +7,6 @@
  * # LargestQuakes
  * Returns the largest earthquake for the day, week, month, and year
  */
-
 angular.module('earthquakeApp')
   .controller('MainCtrl', function () {
   });
@@ -58,7 +55,7 @@ angular.module('earthquakeApp')
 
 	function onEachFeature(feature, layer) {
 		// Add popup with earthquake information to marker
-	    var quake = layer.bindPopup(feature.properties.title);
+	    var quake = layer.bindPopup(feature.properties.title + "<br>" + "test")
 
 	    // Add quake to list of quakes
 	    var list = [moment(feature.properties.time).fromNow(), feature.properties.mag, feature.properties.place]
@@ -90,5 +87,75 @@ angular.module('earthquakeApp')
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
       maxZoom: 18, id: 'mapbox.streets'
     }).addTo(map);
+
+}]);
+
+angular.module('earthquakeApp')
+.controller('Tsunami', ['$scope','$http', function($scope, $http) {
+
+	$scope.tsunamis = []
+
+	// Adds potetial tsunami to a list of tsunami alerts
+	function onEachFeature(feature, layer) {
+
+	    // If the tsunami flag is 1 then the earthquake occurred in
+	    // a region that can generate tsunamis
+	    if (feature.properties.tsunami == 1){
+
+	    	// Get PAGER alert level. This indicates fatality and economic loss 
+	    	// impact estimates following significant earthquakes worldwide. 
+	    	// If the alert level is orange or red then a tsunami is highly likely.
+	    	var alert = feature.properties.alert
+
+	    	// Calculate how long ago the quake occurred
+	    	var time = moment(feature.properties.time).fromNow()
+
+	    	// Get magnitude
+	    	var magnitude = feature.properties.mag
+
+	    	// Get location
+	    	var location = feature.properties.place
+
+	    	// Get more details. The detail property contains a url to another JSON object
+	    	// which contains detailed information about a single earthquake.
+	    	$http.get(feature.properties.detail)
+				.success(function(data, status, headers, config) {
+					L.geoJson(data, {
+				    	onEachFeature: function (feature, layer) {
+				    			if (feature.properties.products["impact-link"] != undefined){
+				    				console.log(feature.properties.products["impact-link"][0].properties.text)
+				    			}
+				    		}
+				    })
+				})
+				.error(function(error, status, headers, config) {
+				     console.log(status)
+				     console.log("Error occured")
+				});
+
+	    	// Add tsunami properties to list
+	    	var list = [alert, time, magnitude, location]
+	    	$scope.tsunamis.push(list)
+	    }
+	}
+
+	// Calculate start and end dates
+	var start = moment().add(-1, 'years')
+	var end = moment()
+
+	// Construct query url
+	var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&limit=20&minmagnitude=7.5&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
+
+	// Get tsunami data
+  	$http.get(url)
+	.success(function(data, status, headers, config) {
+		L.geoJson(data, {
+		    onEachFeature: onEachFeature
+            });
+	})
+	.error(function(error, status, headers, config) {
+	     console.log(status)
+	     console.log("Error occured")
+	});
 
 }]);

@@ -13,14 +13,33 @@ body {
   color: #FFFFFF;
 }
 
-.navbar, .navbar-main{
-  background-color: #FFFFFF; !important;
+.navbar{
+  background-color: #414141 !important;
+}
+
+.navbar-brand {
+    color: #CCC !important;
+}
+
+.navbar li a {
+  color: #EDEDED !important;
+}
+
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+    color: #555;
+    background-color: #333 !important;
 }
 
 .panel-heading{
-  color: #4D4D4D !important;
+  color: #727272 !important;
+  text-transform: uppercase;
   font-weight: bold;
   font-size: 15px;
+}
+
+.range {
+  color: #737373;
+  text-transform: uppercase;
 }
 
 

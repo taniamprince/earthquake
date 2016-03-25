@@ -9,22 +9,22 @@
                   <div ng-controller="LargestQuakes">
                     <div ng-init="param='today';">
                       <div ng-app="today" ng-controller="LargestQuakes">
-                        <h5>Today: {{ results }}</h5>
+                        <span class="range">Today:</span> {{ results }}
                       </div> 
                     </div>
                     <div ng-init="param='week';">
                       <div ng-app="week" ng-controller="LargestQuakes">
-                        <h5>Week: {{ results }}</h5>
+                        <span class="range">Week:</span> {{ results }}
                       </div> 
                     </div>
                     <div ng-init="param='month';">
                       <div ng-app="week" ng-controller="LargestQuakes">
-                        <h5>Month: {{ results }}</h5>
+                        <span class="range">Month:</span> {{ results }}
                       </div> 
                     </div>
                     <div ng-init="param='year';">
                       <div ng-app="week" ng-controller="LargestQuakes">
-                        <h5>Year: {{ results }}</h5>
+                        <span class="range">Year:</span> {{ results }}
                       </div> 
                     </div>
                   </div>
@@ -37,7 +37,18 @@
               <div class="panel panel-default">
                 <div class="panel-heading">Earthquake Frequency</div>
                 <div class="panel-body">
-                  Panel content
+                  <div>
+                    <span class="badge">42</span>  earthquakes today
+                  </div>
+                  <div>
+                    <span class="badge">115</span>  earthquakes in the last 7 days
+                  </div>
+                  <div>
+                    <span class="badge">3467</span>  earthquakes in the last month
+                  </div>
+                  <div>
+                    <span class="badge">15673</span>  earthquakes in the last year
+                  </div>
                 </div>
               </div>  
             </div>
@@ -45,9 +56,24 @@
             <!-- Tsunami warnings -->
             <div class="col-lg-4">  
               <div class="panel panel-default">
-                <div class="panel-heading">Tsunami Warnings</div>
+                <div class="panel-heading">Tsunami Alerts</div>
                 <div class="panel-body">
-                  Panel content
+                  <div ng-controller="Tsunami">
+                    <div ng-repeat="tsunami in tsunamis track by $index">
+                      <span ng-if="tsunami[0] == 'green'">
+                        <span class="label label-success">{{ tsunami[0] }}</span>
+                      </span>
+                      <span ng-if="tsunami[0] == 'orange'">
+                        <span class="label label-warning">{{ tsunami[0] }}</span>
+                      </span>
+                      <span ng-if="tsunami[0] == 'red'">
+                        <span class="label label-danger">{{ tsunami[0] }}</span>
+                      </span>
+                      <span class="time">{{ tsunami[1] }}</span>
+                      <span class="mag">M {{ tsunami[2] }}</span>
+                       {{ tsunami[3] }}
+                    </div>
+                  </div>
                 </div>
               </div> 
             </div>
