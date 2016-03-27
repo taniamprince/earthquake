@@ -42,6 +42,12 @@ body {
   text-transform: uppercase;
 }
 
+#freq {
+  height:150px; 
+  margin-bottom: -15px; 
+  margin-top: -15px;
+}
+
 
 /*  ################################################################
   MAPS

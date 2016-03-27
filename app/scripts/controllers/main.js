@@ -52,6 +52,79 @@ angular.module('earthquakeApp')
 }]);
 
 angular.module('earthquakeApp')
+	.controller('Frequency', ['$scope','$http', function($scope, $http) {
+
+	$scope.data = []
+
+	// Calculate end date
+	var end = moment();
+
+	// Get daily earthquake count
+	var start = moment().add(-1, 'days')
+	var url = "http://earthquake.usgs.gov/fdsnws/event/1/count?&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
+	
+	var request = $http.get(url).then(function (response) {
+        $scope.data = response; 
+        return response;
+    });
+
+    request.then(function (data) {
+    	console.log(data.data)
+    });
+
+	// Highcharts
+	$(function () { 
+	      $('#freq').highcharts({
+	          chart: {
+	              type: 'bar',
+	          },
+	          title: {
+	              text: ''
+	          },
+	          xAxis: {
+	              categories: ['']
+	          },
+	          yAxis: {
+	              title: {
+	                  text: ''
+	              }
+	          },
+	          credits: {
+	              enabled: false
+	          },
+	          plotOptions: {
+	              bar: {
+	                  dataLabels: {
+	                      enabled: true
+	                  }
+	              },
+	              series: {
+	                pointPadding: 0,
+	                groupPadding: 0
+	            }
+	          },
+	          tooltip: { 
+	              enabled: false 
+	          },
+	          series: [{
+	              name: 'Day',
+	              data: [155]
+	          }, {
+	              name: 'Week',
+	              data: [1500]
+	          }, {
+	              name: 'Month',
+	              data: [3000]
+	          }, {
+	              name: 'Year',
+	              data: [13000]
+	          }]
+	      });
+	  });
+
+}]);
+
+angular.module('earthquakeApp')
 .controller('MapDay', ['$scope','$http', function($scope, $http) {
 
 	$scope.quakes = []
