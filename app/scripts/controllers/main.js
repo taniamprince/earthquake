@@ -14,6 +14,8 @@ angular.module('earthquakeApp')
 angular.module('earthquakeApp')
 	.controller('LargestQuakes', ['$scope','$http', function($scope, $http) {
 
+	$scope.largest = []
+
 	// Calculate start and end dates
   	if ($scope.param == "today") {
 	    var start = moment().add(-1, 'days')
@@ -21,30 +23,31 @@ angular.module('earthquakeApp')
 		var start = moment().add(-7, 'days')    
 	} else if ($scope.param == "month") {
 		var start = moment().add(-1, 'months')	    
-	} else {
+	} else if ($scope.param == "year"){
 	    var start = moment().add(-1, 'years')
+	} else {
+		var start = moment().add(-10, 'years')
 	}
 	var end = moment();
 
   	// Construct query url
   	var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
 
-  	if ($scope.param == "year") {
+  	if ($scope.param == "year" || $scope.param == "decade") {
   		var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD") + '&&minmagnitude=7.5'
   	}
 
   	// Get earthquake data
   	$http.get(url)
 	.success(function(data, status, headers, config) {
-		var result = data.features.map(function (feature) {
-  			return feature.properties.title
+		data.features.map(function (feature) {
+  			$scope.largest.push(feature.properties.mag, feature.properties.place)
 		});
-	    $scope.results = result.toString()
 	})
 	.error(function(error, status, headers, config) {
-		 $scope.results = "No data"
-	     console.log(status)
-	     console.log("Error occured")
+		$scope.largest.push("", "")
+	    console.log(status)
+	    console.log("Error occured")
 	});
 }]);
 
