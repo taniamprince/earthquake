@@ -18,14 +18,14 @@ angular.module('earthquakeApp').controller('LargestQuakes', ['$scope','$http', f
 	$scope.largest = []
 
 	// Calculate start and end dates
-  	if ($scope.param == "today") {
-	    var start = moment().add(-1, 'days')
+	if ($scope.param == "today") {
+		var start = moment().add(-1, 'days')
 	} else if ($scope.param == "week") {
 		var start = moment().add(-7, 'days')    
 	} else if ($scope.param == "month") {
 		var start = moment().add(-1, 'months')	    
 	} else if ($scope.param == "year"){
-	    var start = moment().add(-1, 'years')
+		var start = moment().add(-1, 'years')
 	} else if ($scope.param == "decade"){
 		var start = moment().add(-10, 'years')
 	} else {
@@ -37,14 +37,14 @@ angular.module('earthquakeApp').controller('LargestQuakes', ['$scope','$http', f
   	var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
 
   	if ($scope.param == "year" || $scope.param == "decade" || $scope.param == "century") {
-  		var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD") + '&&minmagnitude=7.5'
+ 		var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD") + '&&minmagnitude=7.5'
   	}
 
   	// Get earthquake data
   	$http.get(url)
 	.success(function(data, status, headers, config) {
 		data.features.map(function (feature) {
-  			$scope.largest.push(feature.properties.mag, feature.properties.place)
+				$scope.largest.push(feature.properties.mag, feature.properties.place)
 		});
 	})
 	.error(function(error, status, headers, config) {
@@ -91,19 +91,19 @@ angular.module('earthquakeApp').controller('Tsunami', ['$http', function($http) 
 	    	// Get more details. The detail property contains a url to another JSON object
 	    	// which contains detailed information about a single earthquake.
 	    	$http.get(feature.properties.detail)
-				.success(function(data, status, headers, config) {
-					L.geoJson(data, {
-				    	onEachFeature: function (feature, layer) {
-				    			if (feature.properties.products["impact-link"] != undefined){
-				    				console.log(feature.properties.products["impact-link"][0].properties.text)
-				    			}
-				    		}
-				    })
-				})
-				.error(function(error, status, headers, config) {
-				     console.log(status)
-				     console.log("Error occured")
-				});
+			.success(function(data, status, headers, config) {
+				L.geoJson(data, {
+			    	onEachFeature: function (feature, layer) {
+			    			if (feature.properties.products["impact-link"] != undefined){
+			    				console.log(feature.properties.products["impact-link"][0].properties.text)
+			    			}
+			    		}
+			    })
+			})
+			.error(function(error, status, headers, config) {
+			     console.log(status)
+			     console.log("Error occured")
+			});
 
 	    	// Add tsunami properties to list
 	    	var list = [alert, time, magnitude, location]
@@ -143,12 +143,12 @@ angular.module('earthquakeApp').controller('Tsunami', ['$http', function($http) 
  * integer and returns it.
  */
 angular.module('earthquakeApp').service('CountService', ['$http', function ($http) {
-    this.getCount = function (url) {
-    	var count = $http.get(url).then(function (response) {
-        return parseInt(response.data)
-      	});
-      return count
-    };
+	this.getCount = function (url) {
+	var count = $http.get(url).then(function (response) {
+		return parseInt(response.data)
+	});
+	return count
+	};
 }]);
 
 /**
@@ -163,9 +163,9 @@ angular.module('earthquakeApp').service('CountService', ['$http', function ($htt
  * to retrieve earthquake counts by the Frequency controller.
  */
 angular.module('earthquakeApp').service('UrlService', ['$http', function ($http) {
-    this.getUrl = function (start, end) {
-      return "http://earthquake.usgs.gov/fdsnws/event/1/count?&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
-    };
+	this.getUrl = function (start, end) {
+		return "http://earthquake.usgs.gov/fdsnws/event/1/count?&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
+	};
 }]);
 
 /**
@@ -199,10 +199,10 @@ angular.module('earthquakeApp').controller('Frequency', ['$http', 'CountService'
 	count()
 
 	function count() {
-        CountService.getCount(dailyUrl).then(function(day) {
-            CountService.getCount(weeklyUrl).then(function(week) {
-            	CountService.getCount(monthlyUrl).then(function(month) {
-        			$(function () { 
+		CountService.getCount(dailyUrl).then(function(day) {
+			CountService.getCount(weeklyUrl).then(function(week) {
+				CountService.getCount(monthlyUrl).then(function(month) {
+					$(function () { 
 					    $('#freq').highcharts({
 					        chart: {
 					            type: 'bar',
@@ -247,10 +247,10 @@ angular.module('earthquakeApp').controller('Frequency', ['$http', 'CountService'
 					        }]
 					    });
 					});
-	        	});
-	        });
-        });
-    }  
+				});
+			});
+		});
+	}  
 }]);
 
 /**
@@ -279,22 +279,21 @@ angular.module('earthquakeApp').controller('MapDay', ['$http', function($http) {
 	var map = L.map('mapid').setView([0, 0], 1);
 
 	// Get earthquake data
-  	$http.get('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson')
+	$http.get('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson')
 	.success(function(data, status, headers, config) {
-		L.geoJson(data, {
-			// Add earthquake informtion to marker popups
-		    onEachFeature: onEachFeature
-		,
-			// Add earthquake magnitude to marker
-            pointToLayer: function(feature, latlng) {
-                return L.marker(latlng, {
-                    icon: L.AwesomeMarkers.icon({icon: '', prefix: 'fa', markerColor: 'red', html: feature.properties.mag})
-                })
-            }}).addTo(map);
+	L.geoJson(data, {
+		// Add earthquake informtion to marker popups
+		onEachFeature: onEachFeature,
+		// Add earthquake magnitude to marker
+		pointToLayer: function(feature, latlng) {
+			return L.marker(latlng, {
+				icon: L.AwesomeMarkers.icon({icon: '', prefix: 'fa', markerColor: 'red', html: feature.properties.mag})
+			})
+		}}).addTo(map);
 	})
 	.error(function(error, status, headers, config) {
-	     console.log(status)
-	     console.log("Error occured")
+		console.log(status)
+		console.log("Error occured")
 	});
 
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
