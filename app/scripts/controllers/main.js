@@ -1,18 +1,19 @@
 'use strict';
 
-/**
- * @ngdoc function
- * @name earthquakeApp.controller:LargestQuakes
- * @description
- * # LargestQuakes
- * Returns the largest earthquake for the day, week, month, and year
- */
 angular.module('earthquakeApp')
   .controller('MainCtrl', function () {
   });
 
-angular.module('earthquakeApp')
-	.controller('LargestQuakes', ['$scope','$http', function($scope, $http) {
+/**
+ * @ngdoc controller
+ * @name ng.controller:LargestQuakes
+ * @requires $scope
+ * @requires $http
+ * @description
+ * When called, it gets the largest earthquakes in the last 7 days, 
+ * week, month, year, decade, and century.
+ */
+angular.module('earthquakeApp').controller('LargestQuakes', ['$scope','$http', function($scope, $http) {
 
 	$scope.largest = []
 
@@ -25,15 +26,17 @@ angular.module('earthquakeApp')
 		var start = moment().add(-1, 'months')	    
 	} else if ($scope.param == "year"){
 	    var start = moment().add(-1, 'years')
-	} else {
+	} else if ($scope.param == "decade"){
 		var start = moment().add(-10, 'years')
+	} else {
+		var start = moment().add(-100, 'years')
 	}
 	var end = moment();
 
   	// Construct query url
   	var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
 
-  	if ($scope.param == "year" || $scope.param == "decade") {
+  	if ($scope.param == "year" || $scope.param == "decade" || $scope.param == "century") {
   		var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD") + '&&minmagnitude=7.5'
   	}
 
@@ -51,28 +54,131 @@ angular.module('earthquakeApp')
 	});
 }]);
 
+/**
+ * @ngdoc controller
+ * @name ng.controller:Tsunami
+ * @requires $http
+ * @description
+ * When called, it gets earthquakes over magnitude 7.5 that have 
+ * occurred in a region that could trigger a tsunami.
+ */
+angular.module('earthquakeApp').controller('Tsunami', ['$http', function($http) {
 
-angular.module('earthquakeApp')
+	var vm = this
+	vm.tsunamis = []
 
-	// Gets and returns earthquake count from url
-	.service('CountService', ['$http', function ($http) {
-        this.getCount = function (url) {
-        	var count = $http.get(url).then(function (response) {
-	        return parseInt(response.data)
-	      	});
-	      return count
-        };
-    }])
+	// Adds potetial tsunami to a list of tsunami alerts
+	function onEachFeature(feature, layer) {
 
-    // Constructs and returns query url from given start and end dates
-	.service('UrlService', ['$http', function ($http) {
-        this.getUrl = function (start, end) {
-	      return "http://earthquake.usgs.gov/fdsnws/event/1/count?&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
-        };
-    }])
+	    // If the tsunami flag is 1 then the earthquake occurred in
+	    // a region that can generate tsunamis
+	    if (feature.properties.tsunami == 1){
 
-	// Gets earthquake counts and populates highcharts data
-	.controller('Frequency', ['$http', 'CountService', 'UrlService', function($http, CountService, UrlService) {
+	    	// Get PAGER alert level. This indicates fatality and economic loss 
+	    	// impact estimates following significant earthquakes worldwide. 
+	    	// If the alert level is orange or red then a tsunami is highly likely.
+	    	var alert = feature.properties.alert
+
+	    	// Calculate how long ago the quake occurred
+	    	var time = moment(feature.properties.time).fromNow()
+
+	    	// Get magnitude
+	    	var magnitude = feature.properties.mag
+
+	    	// Get location
+	    	var location = feature.properties.place
+
+	    	// Get more details. The detail property contains a url to another JSON object
+	    	// which contains detailed information about a single earthquake.
+	    	$http.get(feature.properties.detail)
+				.success(function(data, status, headers, config) {
+					L.geoJson(data, {
+				    	onEachFeature: function (feature, layer) {
+				    			if (feature.properties.products["impact-link"] != undefined){
+				    				console.log(feature.properties.products["impact-link"][0].properties.text)
+				    			}
+				    		}
+				    })
+				})
+				.error(function(error, status, headers, config) {
+				     console.log(status)
+				     console.log("Error occured")
+				});
+
+	    	// Add tsunami properties to list
+	    	var list = [alert, time, magnitude, location]
+	    	vm.tsunamis.push(list)
+	    }
+	}
+
+	// Calculate start and end dates
+	var start = moment().add(-1, 'years')
+	var end = moment()
+
+	// Construct query url
+	var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&limit=20&minmagnitude=7.5&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
+
+	// Get tsunami data
+  	$http.get(url)
+	.success(function(data, status, headers, config) {
+		L.geoJson(data, {
+		    onEachFeature: onEachFeature
+            });
+	})
+	.error(function(error, status, headers, config) {
+	     console.log(status)
+	     console.log("Error occured")
+	});
+
+}]);
+
+/**
+ * @ngdoc service
+ * @name ng.service:CountService
+ * @requires $http
+ * @param {String} url - query url
+ * @returns {Integer} the number of earthquakes from the given query period
+ * @description
+ * Gets number of earthquakes from the given query url. Parses result to
+ * integer and returns it.
+ */
+angular.module('earthquakeApp').service('CountService', ['$http', function ($http) {
+    this.getCount = function (url) {
+    	var count = $http.get(url).then(function (response) {
+        return parseInt(response.data)
+      	});
+      return count
+    };
+}]);
+
+/**
+ * @ngdoc service
+ * @name ng.service:UrlService
+ * @requires $http
+ * @param {String} start - date in ISO8601 Date/Time format
+ * @param {String} end - ISO8601 Date/Time format
+ * @returns {String} query url
+ * @description
+ * When called, it constructs and returns a query url which is used
+ * to retrieve earthquake counts by the Frequency controller.
+ */
+angular.module('earthquakeApp').service('UrlService', ['$http', function ($http) {
+    this.getUrl = function (start, end) {
+      return "http://earthquake.usgs.gov/fdsnws/event/1/count?&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
+    };
+}]);
+
+/**
+ * @ngdoc controller
+ * @name ng.controller:Frequency
+ * @requires $http
+ * @requires CountService
+ * @requires UrlService
+ * @description
+ * When called, it gets the daily, weekly, and monthly earthquake counts
+ * and then populates a highcharts graph with the data.
+ */
+angular.module('earthquakeApp').controller('Frequency', ['$http', 'CountService', 'UrlService', function($http, CountService, UrlService) {
 
 	// Calculate end date
 	var end = moment();
@@ -147,8 +253,15 @@ angular.module('earthquakeApp')
     }  
 }]);
 
-angular.module('earthquakeApp')
-.controller('MapDay', ['$http', function($http) {
+/**
+ * @ngdoc controller
+ * @name ng.controller:MapDay
+ * @requires $http
+ * @description
+ * Gets earthquakes over magnitude 4.5 in the last 24 hours and populates
+ * leaflet map with earthquake data.
+ */
+angular.module('earthquakeApp').controller('MapDay', ['$http', function($http) {
 
 	var vm = this
 	vm.quakes = []
@@ -187,76 +300,5 @@ angular.module('earthquakeApp')
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
       maxZoom: 18, id: 'mapbox.streets'
     }).addTo(map);
-
-}]);
-
-angular.module('earthquakeApp')
-.controller('Tsunami', ['$http', function($http) {
-
-	var vm = this
-	vm.tsunamis = []
-
-	// Adds potetial tsunami to a list of tsunami alerts
-	function onEachFeature(feature, layer) {
-
-	    // If the tsunami flag is 1 then the earthquake occurred in
-	    // a region that can generate tsunamis
-	    if (feature.properties.tsunami == 1){
-
-	    	// Get PAGER alert level. This indicates fatality and economic loss 
-	    	// impact estimates following significant earthquakes worldwide. 
-	    	// If the alert level is orange or red then a tsunami is highly likely.
-	    	var alert = feature.properties.alert
-
-	    	// Calculate how long ago the quake occurred
-	    	var time = moment(feature.properties.time).fromNow()
-
-	    	// Get magnitude
-	    	var magnitude = feature.properties.mag
-
-	    	// Get location
-	    	var location = feature.properties.place
-
-	    	// Get more details. The detail property contains a url to another JSON object
-	    	// which contains detailed information about a single earthquake.
-	    	$http.get(feature.properties.detail)
-				.success(function(data, status, headers, config) {
-					L.geoJson(data, {
-				    	onEachFeature: function (feature, layer) {
-				    			if (feature.properties.products["impact-link"] != undefined){
-				    				console.log(feature.properties.products["impact-link"][0].properties.text)
-				    			}
-				    		}
-				    })
-				})
-				.error(function(error, status, headers, config) {
-				     console.log(status)
-				     console.log("Error occured")
-				});
-
-	    	// Add tsunami properties to list
-	    	var list = [alert, time, magnitude, location]
-	    	vm.tsunamis.push(list)
-	    }
-	}
-
-	// Calculate start and end dates
-	var start = moment().add(-1, 'years')
-	var end = moment()
-
-	// Construct query url
-	var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&limit=20&minmagnitude=7.5&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
-
-	// Get tsunami data
-  	$http.get(url)
-	.success(function(data, status, headers, config) {
-		L.geoJson(data, {
-		    onEachFeature: onEachFeature
-            });
-	})
-	.error(function(error, status, headers, config) {
-	     console.log(status)
-	     console.log("Error occured")
-	});
 
 }]);
