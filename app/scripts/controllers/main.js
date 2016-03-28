@@ -51,29 +51,33 @@ angular.module('earthquakeApp')
 	});
 }]);
 
-angular.module('earthquakeApp')
-	.controller('Frequency', ['$scope','$http', function($scope, $http) {
 
-	$scope.data = []
+angular.module('earthquakeApp')
+
+	// Gets and returns earthquake count from url
+	.service('CountService', ['$http', function ($http) {
+        this.getCount = function (urls) {
+        	var count = $http.get(urls[0]).then(function (response) {
+	        return parseInt(response.data)
+	      	});
+	      return count
+        };
+    }])
+
+	.controller('Frequency', ['$http', 'CountService', function($http, CountService) {
 
 	// Calculate end date
 	var end = moment();
 
 	// Get daily earthquake count
 	var start = moment().add(-1, 'days')
-	var url = "http://earthquake.usgs.gov/fdsnws/event/1/count?&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
+	var urls = []
+	urls.push("http://earthquake.usgs.gov/fdsnws/event/1/count?&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD"))
 	
-	var request = $http.get(url).then(function (response) {
-        $scope.data = response; 
-        return response;
-    });
-
-    request.then(function (data) {
-    	console.log(data.data)
-    });
-
-	// Highcharts
-	$(function () { 
+	CountService.getCount(urls).then(function (response) { return console.log(response) })
+       
+    // Highcharts
+    $(function () { 
 	      $('#freq').highcharts({
 	          chart: {
 	              type: 'bar',
@@ -109,7 +113,7 @@ angular.module('earthquakeApp')
 	          series: [{
 	              name: 'Day',
 	              data: [155]
-	          }, {
+	              }, {
 	              name: 'Week',
 	              data: [1500]
 	          }, {
@@ -120,14 +124,15 @@ angular.module('earthquakeApp')
 	              data: [13000]
 	          }]
 	      });
-	  });
+	  });  
 
 }]);
 
 angular.module('earthquakeApp')
-.controller('MapDay', ['$scope','$http', function($scope, $http) {
+.controller('MapDay', ['$http', function($http) {
 
-	$scope.quakes = []
+	var vm = this
+	vm.quakes = []
 
 	function onEachFeature(feature, layer) {
 		// Add popup with earthquake information to marker
@@ -135,7 +140,7 @@ angular.module('earthquakeApp')
 
 	    // Add quake to list of quakes
 	    var list = [moment(feature.properties.time).fromNow(), feature.properties.mag, feature.properties.place]
-	    $scope.quakes.push(list)
+	    vm.quakes.push(list)
 	}
 
 	// Initialize map
@@ -167,9 +172,10 @@ angular.module('earthquakeApp')
 }]);
 
 angular.module('earthquakeApp')
-.controller('Tsunami', ['$scope','$http', function($scope, $http) {
+.controller('Tsunami', ['$http', function($http) {
 
-	$scope.tsunamis = []
+	var vm = this
+	vm.tsunamis = []
 
 	// Adds potetial tsunami to a list of tsunami alerts
 	function onEachFeature(feature, layer) {
@@ -211,7 +217,7 @@ angular.module('earthquakeApp')
 
 	    	// Add tsunami properties to list
 	    	var list = [alert, time, magnitude, location]
-	    	$scope.tsunamis.push(list)
+	    	vm.tsunamis.push(list)
 	    }
 	}
 
