@@ -275,7 +275,7 @@ angular.module('earthquakeApp').controller('MapDay', ['$http', function($http) {
     }
 
     // Initialize map
-    var map = L.map('mapid').setView([0, 0], 1);
+    var map = L.map('mapDay').setView([0, 0], 1);
 
     // Get earthquake data
     $http.get('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson')
