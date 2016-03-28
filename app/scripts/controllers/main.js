@@ -56,76 +56,95 @@ angular.module('earthquakeApp')
 
 	// Gets and returns earthquake count from url
 	.service('CountService', ['$http', function ($http) {
-        this.getCount = function (urls) {
-        	var count = $http.get(urls[0]).then(function (response) {
+        this.getCount = function (url) {
+        	var count = $http.get(url).then(function (response) {
 	        return parseInt(response.data)
 	      	});
 	      return count
         };
     }])
 
-	.controller('Frequency', ['$http', 'CountService', function($http, CountService) {
+    // Constructs and returns query url from given start and end dates
+	.service('UrlService', ['$http', function ($http) {
+        this.getUrl = function (start, end) {
+	      return "http://earthquake.usgs.gov/fdsnws/event/1/count?&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
+        };
+    }])
+
+	// Gets earthquake counts and populates highcharts data
+	.controller('Frequency', ['$http', 'CountService', 'UrlService', function($http, CountService, UrlService) {
 
 	// Calculate end date
 	var end = moment();
 
-	// Get daily earthquake count
+	// Calculate start date and get daily earthquake count url
 	var start = moment().add(-1, 'days')
-	var urls = []
-	urls.push("http://earthquake.usgs.gov/fdsnws/event/1/count?&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD"))
+	var dailyUrl = UrlService.getUrl(start, end)
 	
-	CountService.getCount(urls).then(function (response) { return console.log(response) })
-       
-    // Highcharts
-    $(function () { 
-	      $('#freq').highcharts({
-	          chart: {
-	              type: 'bar',
-	          },
-	          title: {
-	              text: ''
-	          },
-	          xAxis: {
-	              categories: ['']
-	          },
-	          yAxis: {
-	              title: {
-	                  text: ''
-	              }
-	          },
-	          credits: {
-	              enabled: false
-	          },
-	          plotOptions: {
-	              bar: {
-	                  dataLabels: {
-	                      enabled: true
-	                  }
-	              },
-	              series: {
-	                pointPadding: 0,
-	                groupPadding: 0
-	            }
-	          },
-	          tooltip: { 
-	              enabled: false 
-	          },
-	          series: [{
-	              name: 'Day',
-	              data: [155]
-	              }, {
-	              name: 'Week',
-	              data: [1500]
-	          }, {
-	              name: 'Month',
-	              data: [3000]
-	          }, {
-	              name: 'Year',
-	              data: [13000]
-	          }]
-	      });
-	  });  
+	// Calculate start date and get weekly earthquake count url
+	start = moment().add(-7, 'days')
+	var weeklyUrl = UrlService.getUrl(start, end)
 
+	// Calculate start date and get monthly earthquake count url
+	start = moment().add(-1, 'months')
+	var monthlyUrl = UrlService.getUrl(start, end)
+
+	// Populate highchart data
+	count()
+
+	function count() {
+        CountService.getCount(dailyUrl).then(function(day) {
+            CountService.getCount(weeklyUrl).then(function(week) {
+            	CountService.getCount(monthlyUrl).then(function(month) {
+        			$(function () { 
+					    $('#freq').highcharts({
+					        chart: {
+					            type: 'bar',
+					        },
+					        title: {
+					            text: ''
+					        },
+					        xAxis: {
+					            categories: ['']
+					        },
+					        yAxis: {
+					            title: {
+					                text: ''
+					            }
+					        },
+					        credits: {
+					            enabled: false
+					        },
+					        plotOptions: {
+					            bar: {
+					                dataLabels: {
+					                    enabled: true
+					                }
+					            },
+					            series: {
+					              pointPadding: 0,
+					              groupPadding: 0
+					          }
+					        },
+					        tooltip: { 
+					            enabled: false 
+					        },
+					        series: [{
+					            name: 'Day',
+					            data: [day]
+					        }, {
+					            name: 'Week',
+					            data: [week]
+					        }, {
+					            name: 'Month',
+					            data: [month]
+					        }]
+					    });
+					});
+	        	});
+	        });
+        });
+    }  
 }]);
 
 angular.module('earthquakeApp')
