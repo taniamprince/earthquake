@@ -16,34 +16,38 @@ angular.module('earthquakeApp').controller('LargestQuakes', ['$scope', '$http', 
 
     $scope.largest = []
 
-    // Calculate start and end dates
+    // Calculate start and end dates and minimum magnitude
+    // Increasing the magnitude limit speeds up the search query
     if ($scope.param == "today") {
         var start = moment().add(-1, 'days')
+        var minMag = 3.5
     } else if ($scope.param == "week") {
         var start = moment().add(-7, 'days')
+        var minMag = 4.5
     } else if ($scope.param == "month") {
         var start = moment().add(-1, 'months')
+        var minMag = 6
     } else if ($scope.param == "year") {
         var start = moment().add(-1, 'years')
+        var minMag = 7.5
     } else if ($scope.param == "decade") {
         var start = moment().add(-10, 'years')
+        var minMag = 8
     } else {
         var start = moment().add(-100, 'years')
+        var minMag = 8.5
     }
     var end = moment();
 
     // Construct query url
-    var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD")
-
-    if ($scope.param == "year" || $scope.param == "decade" || $scope.param == "century") {
-        var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD") + '&&minmagnitude=7.5'
-    }
+    var url = "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=magnitude&limit=1&starttime=" 
+        + start.format("YYYY-MM-DD") + "&endtime=" + end.format("YYYY-MM-DD") + '&&minmagnitude=' + minMag
 
     // Get earthquake data
     $http.get(url)
         .success(function(data, status, headers, config) {
             data.features.map(function(feature) {
-                $scope.largest.push(feature.properties.mag, feature.properties.place)
+                $scope.largest.push("M " + feature.properties.mag, feature.properties.place)
             });
         })
         .error(function(error, status, headers, config) {
