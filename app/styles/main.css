@@ -3,6 +3,10 @@ body {
   padding-top: 85px; /* Height of navbar */
 }
 
+hr {
+  border-top: 1px solid #CCC !important;
+}
+
 .navbar{
   background-color: #414141 !important;
 }

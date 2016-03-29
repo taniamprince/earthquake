@@ -1,0 +1,52 @@
+<div ng-controller="SearchCtrl">
+	<div class="container">
+	    <div class="row">
+	    	<div class="col-lg-12">
+				<h2>Search Earthquakes <small>Results are limited to 10,000 events</small></h2>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<h3>Basic Options</h3>
+				<hr>
+			</div>
+		</div>
+		<form>
+		<div class="row">
+			<div class="col-lg-4">
+				<h4>Date</h4>
+				<div class="radio">
+				  <label>
+				    <input type="radio" name="optionsRadios" id="dateWeek" ng-model="startDate" ng-change="dateWeek()" checked>
+				    	Last 7 days
+				  </label>
+				</div>
+				<div class="radio">
+				  <label>
+				    <input type="radio" name="optionsRadios" id="dateMonth" ng-model="startDate" ng-change="dateMonth()">
+				    	Last 30 days
+				  </label>
+				</div>
+				<div class="radio">
+				  <label>
+				    <input type="radio" name="optionsRadios" id="dateCustom" value="option2">
+				    	Custom
+				  </label>
+				</div>
+				<div class="form-group">
+				    <label for="queryStartDate">Start (UTC)</label>
+				    <input type="date" class="form-control" id="startDate" ng-model="startDate">
+				  </div>
+				  <div class="form-group">
+				    <label for="queryEndDate">End (UTC)</label>
+				    <input type="date" class="form-control" id="endDate" ng-model="endDate">
+				  </div>
+			</div>
+			<div class="col-lg-4">
+				<h4>Magnitude</h4>
+			</div>
+			<div class="col-lg-4"></div>
+		</div>
+		</form>
+	</div>
+</div>
