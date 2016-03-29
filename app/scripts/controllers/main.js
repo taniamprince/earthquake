@@ -47,7 +47,7 @@ angular.module('earthquakeApp').controller('LargestQuakes', ['$scope', '$http', 
             });
         })
         .error(function(error, status, headers, config) {
-            $scope.largest.push("", "")
+            $scope.largest.push("Error: ", "USGS service is unavailable")
             console.log(status)
             console.log("Error occured")
         });
@@ -125,6 +125,8 @@ angular.module('earthquakeApp').controller('Tsunami', ['$http', function($http) 
             });
         })
         .error(function(error, status, headers, config) {
+            var list = ["Error: ", "USGS service is unavailable", "", ""]
+            vm.tsunamis.push(list)
             console.log(status)
             console.log("Error occured")
         });
@@ -267,7 +269,10 @@ angular.module('earthquakeApp').controller('MapDay', ['$http', function($http) {
 
     function onEachFeature(feature, layer) {
         // Add popup with earthquake information to marker
-        var quake = layer.bindPopup(feature.properties.title + "<br>" + "test")
+        var quake = layer.bindPopup("<span class=\"mag\">" + feature.properties.mag + " magnitude </span>" 
+            + "<span class=\"time\">" + moment(feature.properties.time).fromNow() + "</span> <br/>" 
+            + moment(feature.properties.time).format("dddd, MMMM Do YYYY, h:mm:ss a") + " UTC<br/>"
+            + "<span class=\"location\">" + feature.properties.place + "</span>")
 
         // Add quake to list of quakes
         var list = [moment(feature.properties.time).fromNow(), feature.properties.mag, feature.properties.place]
@@ -275,7 +280,7 @@ angular.module('earthquakeApp').controller('MapDay', ['$http', function($http) {
     }
 
     // Initialize map
-    var map = L.map('mapDay').setView([0, 0], 1);
+    var map = L.map('mapDay').setView([30, 0], 1);
 
     // Get earthquake data
     $http.get('http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson')
@@ -297,6 +302,8 @@ angular.module('earthquakeApp').controller('MapDay', ['$http', function($http) {
             }).addTo(map);
         })
         .error(function(error, status, headers, config) {
+            var list = ["Error: ", "USGS service is unavailable", ""]
+            vm.quakes.push(list)
             console.log(status)
             console.log("Error occured")
         });

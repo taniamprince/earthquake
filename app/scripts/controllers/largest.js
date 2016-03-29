@@ -19,7 +19,10 @@ angular.module('earthquakeApp')
 
     function onEachFeature(feature, layer) {
         // Add popup with earthquake information to marker
-        var quake = layer.bindPopup(feature.properties.title + "<br>" + "test")
+        var quake = layer.bindPopup("<span class=\"mag\">" + feature.properties.mag + " magnitude </span>" 
+            + "<span class=\"time\">" + moment(feature.properties.time).fromNow() + "</span> <br/>" 
+            + moment(feature.properties.time).format("dddd, MMMM Do YYYY, h:mm:ss a") + " UTC<br/>"
+            + "<span class=\"location\">" + feature.properties.place + "</span>")
 
         // Add quake to list of quakes
         var list = [moment(feature.properties.time).fromNow(), feature.properties.mag, feature.properties.place]
